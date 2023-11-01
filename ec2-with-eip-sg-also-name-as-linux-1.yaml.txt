@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create an EC2 instance with an Elastic IP and SSH inbound rule
+
+Resources:
+  MyEC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: t2.micro  # You can change the instance type as needed
+      ImageId: <Your_AMI_ID>  # Replace <Your_AMI_ID> with the desired AMI ID
+      KeyName: <Your_Key_Pair>  # Replace <Your_Key_Pair> with your key pair name
+      SecurityGroups:
+        - !Ref MySecurityGroup  # Associates the created security group
+      Tags:
+        - Key: Name
+          Value: Linux-1  # Set the name tag to Linux-1
+
+  MyEIP:
+    Type: 'AWS::EC2::EIP'
+
+  MySecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0  # You can restrict this to specific IP ranges
+
+  MySecurityGroupIngress:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !GetAtt MySecurityGroup.GroupId
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: 0.0.0.0/0  # You can restrict this to specific IP ranges
+
+Outputs:
+  MyEC2PublicDnsName:
+    Description: Public DNS of the EC2 instance
+    Value: !GetAtt MyEC2Instance.PublicDnsName
+
+  MyEC2PrivateIp:
+    Description: Private IP of the EC2 instance
+    Value: !GetAtt MyEC2Instance.PrivateIp
+
+  MyEC2InstanceId:
+    Description: ID of the EC2 instance
+    Value: !Ref MyEC2Instance
+
+  MyEIPAllocationId:
+    Description: Allocation ID of the Elastic IP
+    Value: !GetAtt MyEIP.AllocationId
+
+  MySecurityGroupId:
+    Description: ID of the Security Group
+    Value: !GetAtt MySecurityGroup.GroupId
