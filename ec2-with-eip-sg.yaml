@@ -6,8 +6,10 @@ Resources:
     Type: 'AWS::EC2::Instance'
     Properties:
       InstanceType: t2.micro  # You can change the instance type as needed
-      ImageId: <Your_AMI_ID>  # Replace <Your_AMI_ID> with the desired AMI ID
-      KeyName: <Your_Key_Pair>  # Replace <Your_Key_Pair> with your key pair name
+      ImageId: ami-01bc990364452ab3e  # Replace <Your_AMI_ID> with the desired AMI ID
+      KeyName: testkey  # Replace <Your_Key_Pair> with your key pair name
+      SecurityGroups:
+        - !Ref MySecurityGroup  # Associates the created security group
 
   MyEIP:
     Type: 'AWS::EC2::EIP'
